@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Jai ❤️</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+body{
+  margin:0;
+  background:linear-gradient(135deg,#ffd6e0,#fff);
+  font-family:Arial,sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* Card styling */
+.card{
+  background:white;
+  padding:30px;
+  border-radius:18px;
+  width:90%;
+  max-width:360px;
+  text-align:center;
+  box-shadow:0 15px 30px rgba(0,0,0,0.15);
+  z-index:2;
+  transform-origin:center;
+}
+
+.hidden{display:none;}
+
+h2{
+  font-size:22px;
+  margin-bottom:15px;
+}
+
+.glow{
+  animation:glowPulse 1.4s infinite alternate;
+}
+
+@keyframes glowPulse{
+  from{text-shadow:0 0 6px #ff4d6d;}
+  to{text-shadow:0 0 18px #ff4d6d;}
+}
+
+button{
+  padding:12px 22px;
+  border:none;
+  border-radius:25px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.yes{
+  background:#ff4d6d;
+  color:white;
+  margin-right:10px;
+}
+
+.no{background:#ddd;}
+
+.fun-text{
+  margin-top:12px;
+  color:#ff4d6d;
+  font-weight:600;
+}
+
+/* Pulsing heart */
+.pulse-heart{
+  font-size:65px;
+  cursor:pointer;
+  animation:pulse 1.2s infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.25);}
+  100%{transform:scale(1);}
+}
+
+/* Floating hearts */
+.heart{
+  position:fixed;
+  bottom:-10px;
+  animation:floatUp 12s linear infinite;
+  opacity:0.6;
+  pointer-events:none;
+  z-index:1;
+}
+
+@keyframes floatUp{
+  from{transform:translateY(0) scale(1);}
+  to{transform:translateY(-110vh) scale(1.4);opacity:0;}
+}
+
+/* Image */
+img{
+  width:65%;
+  max-width:200px;
+  border-radius:12px;
+  margin:15px auto 0;
+  display:block;
+  animation:fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:scale(0.9);}
+  to{opacity:1;transform:scale(1);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- Online music -->
+<audio id="bgMusic" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_4f1b8f4e3f.mp3" type="audio/mpeg">
+</audio>
+
+<!-- START CARD -->
+<div class="card" id="startCard">
+  <h2 id="typedText"></h2>
+  <p>
+    I made this just for you 💫<br>
+    Tap the heart when you’re ready 🫶
+  </p>
+  <div class="pulse-heart" onclick="startExperience()">❤️</div>
+  <p class="fun-text">Tap my heart gently 😌</p>
+</div>
+
+<!-- QUESTION CARD -->
+<div class="card hidden" id="questionCard">
+  <h2 class="glow">Jai, will you be my Valentine? 💌✨</h2>
+  <button class="yes" onclick="yesClick()">Yes</button>
+  <button class="no" id="noBtn">No</button>
+  <p class="fun-text">No is not accepting applications 😏</p>
+  <p id="noMsg" class="hidden fun-text">Nice try 😌 My heart already chose you.</p>
+</div>
+
+<!-- RESULT CARD -->
+<div class="card hidden" id="resultCard">
+  <h2>YAYYYY 🎆💖</h2>
+  <p>
+    Jai…<br><br>
+    Loving you feels like coming home every day.<br>
+    Your smile brightens the darkest moments,<br>
+    your laughter is my favorite melody,<br>
+    and being with you makes everything perfect ✨<br><br>
+    <b>Always you. Always us. ❤️</b>
+  </p>
+  <img src="mee.jpeg">
+</div>
+
+<script>
+const music=document.getElementById("bgMusic");
+const startCard=document.getElementById("startCard");
+const questionCard=document.getElementById("questionCard");
+const resultCard=document.getElementById("resultCard");
+const noBtn=document.getElementById("noBtn");
+const noMsg=document.getElementById("noMsg");
+const cardElements=document.querySelectorAll(".card");
+
+/* Floating hearts */
+function startHearts(count=10){
+  for(let i=0;i<count;i++){
+    const heart=document.createElement("div");
+    heart.className="heart";
+    heart.innerHTML="❤️";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.animationDelay=Math.random()*10+"s";
+    heart.style.fontSize=(14+Math.random()*10)+"px";
+    document.body.appendChild(heart);
+  }
+}
+startHearts(6);
+
+/* Fireworks */
+function fireworks(){
+  const end=Date.now()+1200;
+  (function frame(){
+    confetti({particleCount:6,angle:60,spread:55,origin:{x:0}});
+    confetti({particleCount:6,angle:120,spread:55,origin:{x:1}});
+    if(Date.now()<end) requestAnimationFrame(frame);
+  })();
+}
+
+/* Typing effect */
+const text="Hey Jai 🌙✨❤️";
+let index=0;
+function typeText(){
+  if(index<text.length){
+    document.getElementById("typedText").innerHTML += text.charAt(index);
+    index++;
+    setTimeout(typeText,120);
+  }
+}
+typeText();
+
+/* Start music + heartbeat sync */
+function startExperience(){
+  music.play().catch(()=>{});
+  // Heartbeat sync approx with music (~60-80 bpm)
+  let scaleUp=true;
+  const interval=setInterval(()=>{
+    if(questionCard.classList.contains("hidden") && resultCard.classList.contains("hidden")) return;
+    cardElements.forEach(card=>{
+      card.style.transform=scaleUp?"scale(1.05)":"scale(1)";
+    });
+    scaleUp=!scaleUp;
+  }, 600); // pulse every 0.6s ~ 100 BPM
+  document.getElementById("startCard").classList.add("hidden");
+  questionCard.classList.remove("hidden");
+  fireworks();
+}
+
+/* No click */
+noBtn.addEventListener("click",()=>{
+  music.play().catch(()=>{});
+  noMsg.classList.remove("hidden");
+});
+
+/* Yes click */
+function yesClick(){
+  music.play().catch(()=>{});
+  questionCard.classList.add("hidden");
+  resultCard.classList.remove("hidden");
+  fireworks();
+  fireworks();
+  startHearts(15);
+}
+</script>
+
+</body>
+</html>
